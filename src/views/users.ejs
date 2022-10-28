@@ -1,0 +1,36 @@
+<%- include("./partials/header"); -%>
+<body class="bg-slate-900 mx-4">
+    <%- include("./partials/navigation"); -%>
+    <div class="text-white">
+        <table class="text-white table-auto">
+            <caption>View Staff</caption>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% response.map((staff) => { %>
+                    <tr>
+                        <td><%=staff.username%></td>
+                        <td><%=staff.role%></td>
+                        <td><a href="/users/<%=staff._id%>">
+                                <button class="text-xl text-white rounded-md bg-slate-600/20
+                                    border border-slate-100 text-slate-100 px-4 py-2 mx-4 my-4">
+                                    Details
+                                </button>
+                            </a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <a href="/register">
+            <button class="text-xl text-white rounded-md bg-slate-600/20 border border-slate-100 
+                text-slate-100 px-4 py-2 mx-4 my-4">Add Staff
+            </button>
+        </a>
+    </div>
+</body>

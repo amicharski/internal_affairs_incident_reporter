@@ -1,0 +1,47 @@
+<%- include("./partials/header"); -%>
+<body class="bg-slate-900 mx-4">
+    <%- include("./partials/navigation"); -%>
+    <div>
+        <form name="report" action="/reports/" method="post">
+            <div>
+                <label for="incidentDate" class="text-white">Date of Incident:</label>
+                <input id="incidentDate" name="date" type="date" required />
+            </div>
+            <div>
+                <label for="incidentTime" class="text-white">Approximate Time of Incident:</label>
+                <input id="incidentTime" name="time" type="time" required />
+            </div>
+            <div>
+                <label for="offendingStaffMember" class="text-white">Offending Staff Member(s):
+                    <em>(Optional)</em>
+                </label>
+                <input id="offendingStaffMember" name="offending_staff_member" type="textbox" />
+            </div>
+            <div>
+                <label for="incidentType" class="text-white">Incident Type:</label>
+                <select id="incidentType" name="incident_type" required>
+                    <option value="">Select</option>
+                    <option value="1">St1) Arbitrary or Capricuous Punishment(s)</option>
+                    <option value="2">St2) Unprofessional Conduct</option>
+                    <option value="3">St3) Appropriation of Authority</option>
+                    <option value="4">ISt1) Unprofessional Investigation</option>
+                    <option value="5">ISt2) Appropriation of Authority</option>
+                    <option value="6">Server Rule Violation</option>
+                    <option value="7">Other (please specify in description)</option>
+                </select>
+            </div>
+            <div>
+                <label for="incidentDescription" class="text-white">Description:</label>
+                <textarea id="incidentDescription" name="description" type="text" rows="5" cols="100"
+                minLength="10" maxLength="5000" pattern="^[A-Za-z0-9. ]+$" required></textarea>
+            </div>
+            <div>
+                <button type="submit" class="text-xl rounded-md bg-slate-600/20 border 
+                border-slate-100 text-white px-4 py-2 mx-4 my-4">Submit</button>
+            </div>
+            <!-- <input type="hidden" name="status" value="0" />
+            <input type="hidden" name="resolution_description" value="" />
+            <input type="hidden" name="handledBy" value="" /> -->
+        </form>
+    </div>
+</body>

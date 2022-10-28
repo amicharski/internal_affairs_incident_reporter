@@ -1,0 +1,21 @@
+<%- include("./partials/header"); -%>
+<body class="bg-slate-900 mx-4">
+    <%- include("./partials/navigation"); -%>
+    <div>
+        <form name="register" 
+        action="/auth/register" method="post">
+            <div>
+                <label for="username" class="text-white">Username:</label>
+                <input name="username" id="username" type="textbox" required />
+            </div>
+            <div>
+                <label for="password" class="text-white">Password:</label>
+                <input name="password" id="password" type="password" minLength="8" required />
+            </div>
+            <div>
+                <button type="submit" class="text-xl rounded-md bg-slate-600/20 border 
+                border-slate-100 text-white px-4 py-2 mx-4 my-4">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
