@@ -6,6 +6,25 @@ const { MongoClient, ObjectID } = require('mongodb');
 
 const authRouter = express.Router();
 
+authRouter.route('/change_password').put(async (req, res) => {
+    const { password } = req.body;
+    const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
+    const dbName = 'political_debate_dev';
+
+    let client;
+    try {
+        const db = client.db(dbName);
+        client = await MongoClient.connect(url);
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const results = await db.collection('Users');
+    } catch(error){
+        debug(error);
+    }
+    client.close();
+});
+
 authRouter.route('/register').post((req, res) => {
     const { username, password } = req.body;
     const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
@@ -36,6 +55,7 @@ authRouter.route('/register').post((req, res) => {
             const results = await db.collection('Users')
                 .insertOne(user);
             debug(results);
+            
             const returnedUser = await db.collection('Users')
                 .findOne({_id: results.insertedId});
             debug(returnedUser);
@@ -57,7 +77,8 @@ authRouter.route('/login')
     }).post(
         passport.authenticate('local', {
             successRedirect: '/',
-            failureMessage: '/auth/login'
+            failureRedirect: '/auth/login',
+            failureFlash: true
         })
     );
 
@@ -65,4 +86,12 @@ authRouter.route('/profile').get((req, res) => {
     res.json(req.user);
 });
 
-module.exports = authRouter;
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/auth/login');
+}
+
+
+module.exports = {authRouter, checkAuthenticated};

@@ -3,14 +3,8 @@
     <%- include("./partials/navigation"); -%>
     <div>
         <form name="report" action="/reports/" method="post">
-            <div>
-                <label for="incidentDate" class="text-white">Date of Incident:</label>
-                <input id="incidentDate" name="date" type="date" required />
-            </div>
-            <div>
-                <label for="incidentTime" class="text-white">Approximate Time of Incident:</label>
-                <input id="incidentTime" name="time" type="time" required />
-            </div>
+            <div class="text-white"><%=user._id%></div>
+            <input type="hidden" name="reporter" value="<%=user._id%>" />
             <div>
                 <label for="offendingStaffMember" class="text-white">Offending Staff Member(s):
                     <em>(Optional)</em>
@@ -39,9 +33,6 @@
                 <button type="submit" class="text-xl rounded-md bg-slate-600/20 border 
                 border-slate-100 text-white px-4 py-2 mx-4 my-4">Submit</button>
             </div>
-            <!-- <input type="hidden" name="status" value="0" />
-            <input type="hidden" name="resolution_description" value="" />
-            <input type="hidden" name="handledBy" value="" /> -->
         </form>
     </div>
 </body>

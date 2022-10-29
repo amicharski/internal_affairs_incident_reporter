@@ -11,7 +11,6 @@ module.exports = function localStrategy(){
     }, async (username, password, done) => {
         const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
         const dbName = 'political_debate_dev';
-        debug('dooby dooby doo dah');
 
         let client;
         try {
@@ -31,12 +30,10 @@ module.exports = function localStrategy(){
                 debug('password correct');
                 done(null, user);
             } else {
-                debug('meat patty');
                 done(null, false);
             }
                     
         } catch(error){
-            debug('semen');
             done(error, false);
         }
         client.close();

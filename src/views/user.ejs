@@ -1,7 +1,18 @@
-<html>
-    <body>
-        <%- include("./partials/navigation"); -%>
-        <%=user.username%> <br />
-        <%=user.role%>
-    </body>
-</html>
+<%- include("./partials/header"); -%>
+<body class="bg-slate-900 mx-4 text-white">
+    <%- include("./partials/navigation"); -%>
+    <div class="border border-round-md p-4">
+        Username: <%=user.username%> <br />
+        Role: <%=getRole(user.role)%>
+    </div>
+</body>
+
+<% function getRole(id){
+    switch(id){
+        case 0: return "Suspended"; break;
+        case 1: return "General Staff (NOT ACTIVATED)"; break;
+        case 2: return "General Staff"; break;
+        case 3: return "Internal Affairs"; break;
+        case 4: return "Administrator"; break;
+    }
+}%>

@@ -2,6 +2,9 @@
 <body class="bg-slate-900 mx-4">
     <%- include("./partials/navigation"); -%>
     <div>
+        <div class="text-red-500">
+            Invalid username/password combo
+        </div>
         <form name="register" 
         action="/auth/register" method="post">
             <div>

@@ -8,14 +8,13 @@
                 <tr>
                     <th>Username</th>
                     <th>Role</th>
-                    <th>ID</th>
                 </tr>
             </thead>
             <tbody>
                 <% response.map((staff) => { %>
                     <tr>
                         <td><%=staff.username%></td>
-                        <td><%=staff.role%></td>
+                        <td><%=getRole(staff.role)%></td>
                         <td><a href="/users/<%=staff._id%>">
                                 <button class="text-xl text-white rounded-md bg-slate-600/20
                                     border border-slate-100 text-slate-100 px-4 py-2 mx-4 my-4">
@@ -34,3 +33,13 @@
         </a>
     </div>
 </body>
+
+<% function getRole(id){
+    switch(id){
+        case 0: return "Suspended"; break;
+        case 1: return "General Staff (NOT ACTIVATED)"; break;
+        case 2: return "General Staff"; break;
+        case 3: return "Internal Affairs"; break;
+        case 4: return "Administrator"; break;
+    }
+}%>

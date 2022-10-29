@@ -27,24 +27,29 @@ require('./src/config/passport.js')(app);
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-app.get('/report', (req, res) => {
-    res.render('report');
+app.get('/report', authRouter.checkAuthenticated, (req, res) => {
+    res.render('report', {user: req.user});
 });
 
-app.get('/register', (req, res) => {
+app.get('/register', authRouter.checkAuthenticated, (req, res) => {
     res.render('register');
+});
+
+app.get('/change_password', authRouter.checkAuthenticated, (req, res) => {
+    res.render('change_password');
 });
 
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
-app.use('/auth', authRouter);
+app.use('/auth', authRouter.authRouter);
 app.use('/reports', reportRouter);
 
-app.get('/', (req, res) => {
-    if(req.user){
-        res.redirect('/report');
+app.get('/', authRouter.checkAuthenticated, (req, res) => {
+    const user = req.user
+    if(req.user.role === 1){
+        res.render('change_password', {user: user});
     } else {
-        res.redirect('/auth/login');
+        res.redirect('/report');
     }
 });
 

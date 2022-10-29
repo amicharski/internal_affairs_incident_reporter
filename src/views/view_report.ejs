@@ -1,11 +1,38 @@
-<html>
-    <body>
-        <%- include("./partials/navigation"); -%>
-        <%=report.date%> <br />
-        <%=report.time%> <br />
-        <%=report.offending_staff_member%> <br />
-        <%=report.incident_type%> <br />
-        <%=report.description%> <br />
-        <%=report.status%> </br>
-    </body>
-</html>
+<%- include("./partials/header"); -%>
+<body class="bg-slate-900 mx-4 text-white">
+    <%- include("./partials/navigation"); -%>
+    <div class="border border-round-md p-4">
+        Timestamp: <%=report._id.getTimestamp()%> <br />
+        Reported By: <%=reporter_name%> <br />
+        Offending Staff Member: <%=report.offending_staff_member%> <br />
+        Incident Type: <%=report.incident_type%> <br />
+        Description: <%=report.description%> <br />
+        Status: <%=getStatus(report.status)%> <br />
+        <%  switch(report.status){
+                case 0:%>
+            <button class="text-xl rounded-md bg-slate-600/20 border 
+                border-slate-100 text-white px-4 py-2 mx-4 my-4"
+                onclick="investigateReport()">Investigate Report</button>
+        <%  break; case 1:%>
+            Handled By: <%=report.handled_by%> <br />
+            <button class="text-xl rounded-md bg-slate-600/20 border 
+                border-slate-100 text-white px-4 py-2 mx-4 my-4"
+                onclick="resolveReport()">Resolve Report</button>
+        <%  break; case 2:%>
+            Handled By: <%=report.handled_by%> <br />
+            Resolution Description: <%=report.resolution_description%>
+        <%  break;}%>
+    </div>
+</body>
+
+<% function getStatus(id){
+    switch(id){
+        case 0: return "Unopened"; break;
+        case 1: return "Investigating"; break;
+        case 2: return "Resolved"; break;
+    }
+}
+
+function investigateReport(){
+    alert("You are now investigating this report");
+}%>

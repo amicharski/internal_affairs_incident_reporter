@@ -1,7 +1,18 @@
 const express = require('express');
 const debug = require('debug')('app:reportRouter');
 const axios = require('axios');
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
+const { getUsernameFromID } = require('../services/user_services');
+
+// Date: <%=new Date(parseInt(report._id.substring(0, 8), 16)*1000)%> <br />
+{/* <div>
+<label for="incidentDate" class="text-white">Date of Incident:</label>
+<input id="incidentDate" name="date" type="date" required />
+</div>
+<div>
+<label for="incidentTime" class="text-white">Approximate Time of Incident:</label>
+<input id="incidentTime" name="time" type="time" required />
+</div> */}
 
 const reportRouter = express.Router();
 reportRouter.use((req, res, next) => {
@@ -14,7 +25,7 @@ reportRouter.use((req, res, next) => {
 
 reportRouter.route('/').post(async (req, res) => {
     let client;
-    const { date, time, offending_staff_member, incident_type, description } = req.body;
+    const { offending_staff_member, incident_type, description, reporter, reporter_name } = req.body;
     try {
         const url = 'mongodb://127.0.0.1:27017';
         const dbName = 'political_debate_dev';
@@ -23,10 +34,12 @@ reportRouter.route('/').post(async (req, res) => {
 
         const db = client.db(dbName);
 
-        const report = { date: date, time: time, offending_staff_member: offending_staff_member,
+        const name = await getUsernameFromID(reporter);
+
+        const report = { offending_staff_member: offending_staff_member,
             incident_type: incident_type, description: description,
-            status: 0, resolution_description: '', handledBy: '',
-            reporter: axios.get('http://localhost:8080/auth/profile').username };
+            status: 0, resolution_description: '', handled_by: '',
+            reporter_id: reporter, reporter_name: name };
 
         const results = await db.collection('Reports')
             .insertOne(report);
@@ -77,9 +90,11 @@ reportRouter.route('/:id').get((req, res) => {
         
             const report = await db
                 .collection('Reports')
-                .findOne({_id: new ObjectID(id)});
+                .findOne({_id: new ObjectId(id)});
+            
+            const reported_by = await getUsernameFromID(report.reporter_id);
 
-            res.render('view_report', { report });
+            res.render('view_report', { report: report, reporter_name: reported_by });
           } catch (error) {
             debug(error.stack);
           }
