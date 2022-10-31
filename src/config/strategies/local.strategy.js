@@ -3,14 +3,15 @@ const bcrypt = require('bcrypt');
 const { Strategy } = require('passport-local');
 const { MongoClient } = require('mongodb');
 const debug = require('debug')('app:localStrategy');
+require('dotenv').config();
+const url = process.env.DB_URL;
+const dbName = process.env.DB_NAME;
 
 module.exports = function localStrategy(){
     passport.use(new Strategy({
         usernameField: 'username',
         passwordField: 'password'
     }, async (username, password, done) => {
-        const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-        const dbName = 'political_debate_dev';
 
         let client;
         try {
@@ -37,10 +38,10 @@ module.exports = function localStrategy(){
             } else {
                 done(null, false);
             }
+            client.close();
                     
         } catch(error){
             done(error, false);
         }
-        client.close();
     }));
 };

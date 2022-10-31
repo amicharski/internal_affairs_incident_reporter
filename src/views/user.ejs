@@ -6,7 +6,7 @@
         Role: <%=getRole(user.role)%> <br />
     </div>
     <div class="border border-round-md p-4">
-        <% if(user.role === 3){ %>
+        <% if(currentUser.role === 3){ %>
             <form name="change_role" method="post" action="/users/change_role">
                 <input type="hidden" name="id" value="<%=user._id%>" />
                 <select id="role" name="role" required>
@@ -19,7 +19,7 @@
                     Submit
                 </button>
             </form>
-        <% } else if(user.role === 4){ %>
+        <% } else if(currentUser.role === 4){ %>
             <form name="change_role" method="post" action="/users/change_role">
                 <input type="hidden" name="id" value="<%=user._id%>" />
                 <select id="role" name="role" required>

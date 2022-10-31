@@ -3,13 +3,14 @@ const debug = require('debug')('app:authRouter');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const { MongoClient, ObjectId } = require('mongodb');
+require('dotenv').config();
+const url = process.env.DB_URL;
+const dbName = process.env.DB_NAME;
 
 const authRouter = express.Router();
 
 authRouter.route('/change_password').post(checkAuthenticated, async (req, res) => {
     const { id, password } = req.body;
-    const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-    const dbName = 'political_debate_dev';
 
     let client;
     try {
@@ -37,8 +38,6 @@ authRouter.route('/change_password').post(checkAuthenticated, async (req, res) =
 
 authRouter.route('/register').post((req, res) => {
     const { username, password } = req.body;
-    const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-    const dbName = 'political_debate_dev';
 
     (async function addUser(){
         let client;

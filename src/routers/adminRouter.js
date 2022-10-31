@@ -1,12 +1,13 @@
 const express = require('express');
 const debug = require('debug')('app:adminRouter');
 const { MongoClient } = require('mongodb');
+require('dotenv').config();
+const url = process.env.DB_URL;
+const dbName = process.env.DB_NAME;
 
 const adminRouter = express.Router();
 
 adminRouter.route('/').get(async (req, res) => {
-  const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-  const dbName = 'political_debate_dev';
 
   (async function mongo(){
       let client;

@@ -1,11 +1,12 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const debug = require('debug')('app:user_service');
+require('dotenv').config();
+const url = process.env.DB_URL;
+const dbName = process.env.DB_NAME;
 
 async function getUsernameFromID(id){
   let client;
   try {
-      const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-      const dbName = 'political_debate_dev';
       
       client = await MongoClient.connect(url);
   

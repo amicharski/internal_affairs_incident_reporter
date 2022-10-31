@@ -4,16 +4,9 @@ const axios = require('axios');
 const authRouter = require('./authRouter');
 const { MongoClient, ObjectId } = require('mongodb');
 const { getUsernameFromID } = require('../services/user_services');
-
-// Date: <%=new Date(parseInt(report._id.substring(0, 8), 16)*1000)%> <br />
-{/* <div>
-<label for="incidentDate" class="text-white">Date of Incident:</label>
-<input id="incidentDate" name="date" type="date" required />
-</div>
-<div>
-<label for="incidentTime" class="text-white">Approximate Time of Incident:</label>
-<input id="incidentTime" name="time" type="time" required />
-</div> */}
+require('dotenv').config();
+const url = process.env.DB_URL;
+const dbName = process.env.DB_NAME;
 
 const reportRouter = express.Router();
 reportRouter.use((req, res, next) => {
@@ -28,8 +21,6 @@ reportRouter.route('/').post(async (req, res) => {
     let client;
     const { offending_staff_member, incident_type, description, reporter } = req.body;
     try {
-        const url = 'mongodb://127.0.0.1:27017';
-        const dbName = 'political_debate_dev';
 
         client = await MongoClient.connect(url);
 
@@ -56,8 +47,6 @@ reportRouter.route('/').get(async (req, res) => {
     (async function mongo(){
         let client;
         try {
-            const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-            const dbName = 'political_debate_dev';
             
             client = await MongoClient.connect(url);
             debug('Connected to mongoDB');
@@ -81,8 +70,6 @@ reportRouter.route('/put').post(async (req, res) => {
     let client;
     try {
         debug('heya buddy');
-        const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-        const dbName = 'political_debate_dev';
         
         client = await MongoClient.connect(url);
         debug('Connected to mongoDB');
@@ -122,8 +109,6 @@ reportRouter.route('/:id').get(authRouter.checkAuthenticated, (req, res) => {
     (async function mongo(){
         let client;
         try {
-            const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-            const dbName = 'political_debate_dev';
             
             client = await MongoClient.connect(url);
             debug('Connected to mongoDB');

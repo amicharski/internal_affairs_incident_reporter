@@ -2,6 +2,9 @@ const express = require('express');
 const debug = require('debug')('app:usersRouter');
 const { MongoClient, ObjectId } = require('mongodb');
 const authRouter = require('./authRouter');
+require('dotenv').config();
+const url = process.env.DB_URL;
+const dbName = process.env.DB_NAME;
 
 const usersRouter = express.Router();
 usersRouter.use((req, res, next) => {
@@ -16,8 +19,6 @@ usersRouter.route('/').get(authRouter.checkAuthenticated, async (req, res) => {
     (async function mongo(){
         let client;
         try {
-            const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-            const dbName = 'political_debate_dev';
             
             client = await MongoClient.connect(url);
             debug('Connected to mongoDB');
@@ -35,25 +36,23 @@ usersRouter.route('/').get(authRouter.checkAuthenticated, async (req, res) => {
     })();
 });
 
-usersRouter.route('/:id').get((req, res) => {
+usersRouter.route('/:id').get(authRouter.checkAuthenticated, (req, res) => {
     const id = req.params.id;
 
     (async function mongo(){
         let client;
         try {
-            const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
-            const dbName = 'political_debate_dev';
             
             client = await MongoClient.connect(url);
             debug('Connected to mongoDB');
         
             const db = client.db(dbName);
         
-            const user = await db
+            const userProfile = await db
                 .collection('Users')
                 .findOne({_id: ObjectId(id)});
 
-            res.render('user', { user });
+            res.render('user', { user: userProfile, currentUser: req.user });
           } catch (error) {
             debug(error.stack);
           }
@@ -67,8 +66,6 @@ usersRouter.route('/change_role').post(authRouter.checkAuthenticated, async (req
 
   let client;
   try {
-    const url = 'mongodb://127.0.0.1:27017';
-    const dbName = 'political_debate_dev';
 
     client = await MongoClient.connect(url);
     debug('Connected to mongoDB');
