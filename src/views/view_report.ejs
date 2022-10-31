@@ -1,28 +1,55 @@
 <%- include("./partials/header"); -%>
-<body class="bg-slate-900 mx-4 text-white">
+<body class="bg-slate-900 mx-4">
     <%- include("./partials/navigation"); -%>
     <div class="border border-round-md p-4">
-        Timestamp: <%=report._id.getTimestamp()%> <br />
-        Reported By: <%=reporter_name%> <br />
-        Offending Staff Member: <%=report.offending_staff_member%> <br />
-        Incident Type: <%=report.incident_type%> <br />
-        Description: <%=report.description%> <br />
-        Status: <%=getStatus(report.status)%> <br />
+        <div class="text-white">
+            Timestamp: <%=report._id.getTimestamp()%> <br />
+            Reported By: <%=reporter_name%> <br />
+            Offending Staff Member: <%=report.offending_staff_member%> <br />
+            Incident Type: <%=report.incident_type%> <br />
+            Description: <%=report.description%> <br />
+            Status: <%=getStatus(report.status)%> <br />
+        </div>
         <%  switch(report.status){
                 case 0:%>
-            <button class="text-xl rounded-md bg-slate-600/20 border 
-                border-slate-100 text-white px-4 py-2 mx-4 my-4"
-                onclick="investigateReport()">Investigate Report</button>
+            <form name="investigate_report" action="/reports/put" method="post">
+                <input type="hidden" name="id" value="<%=report._id%>" />
+                <input type="hidden" name="investigator" value="<%=user.username%>" />
+                <input type="hidden" name="status" value="0" />
+                <button type="submit" class="text-xl rounded-md bg-slate-600/20 border 
+                    border-slate-100 text-white px-4 py-2 mx-4 my-4">Investigate Report</button>
+            </form>
         <%  break; case 1:%>
-            Handled By: <%=report.handled_by%> <br />
-            <button class="text-xl rounded-md bg-slate-600/20 border 
-                border-slate-100 text-white px-4 py-2 mx-4 my-4"
-                onclick="resolveReport()">Resolve Report</button>
+            <div class="text-white">
+                Handled By: <%=report.handled_by%> <br />
+            </div>
+            <form name="resolve_report" action="/reports/put" method="post">
+                <input type="hidden" name="id" value="<%=report._id%>" />
+                <input type="hidden" name="status" value="1" />
+                <div>
+                    <label for="resolutionDescription" class="text-white">Resolution Description:</label>
+                    <textarea id="resolutionDescription" name="resolution_description" type="text" rows="5" cols="100"
+                    minLength="10" maxLength="5000" pattern="^[A-Za-z0-9. ]+$" required></textarea>
+                </div>
+                <button type="submit" class="text-xl rounded-md bg-slate-600/20 border 
+                    border-slate-100 text-white px-4 py-2 mx-4 my-4">Resolve Report</button>
+            </form>
         <%  break; case 2:%>
-            Handled By: <%=report.handled_by%> <br />
-            Resolution Description: <%=report.resolution_description%>
+            <div class="text-white">
+                Handled By: <%=report.handled_by%> <br />
+                Resolution Description: <%=report.resolution_description%>
+            </div>
         <%  break;}%>
     </div>
+    <script type="text/javascript">
+        function investigateReport(){
+            alert("You are now investigating this report");
+        }
+
+        function resolveReport(){
+            alert("You have resolved this report");
+        }
+    </script>
 </body>
 
 <% function getStatus(id){
@@ -31,8 +58,4 @@
         case 1: return "Investigating"; break;
         case 2: return "Resolved"; break;
     }
-}
-
-function investigateReport(){
-    alert("You are now investigating this report");
 }%>

@@ -27,8 +27,13 @@ module.exports = function localStrategy(){
             const correctPassword = await bcrypt.compare(password, user.password);
 
             if(correctPassword){
-                debug('password correct');
-                done(null, user);
+                if(user.role > 0){
+                    debug('password correct');
+                    done(null, user);
+                } else {
+                    debug('user is suspended');
+                    done(null, false);
+                }
             } else {
                 done(null, false);
             }

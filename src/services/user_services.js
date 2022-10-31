@@ -1,4 +1,4 @@
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const debug = require('debug')('app:user_service');
 
 async function getUsernameFromID(id){
@@ -13,7 +13,7 @@ async function getUsernameFromID(id){
   
       const user = await db
           .collection('Users')
-          .findOne({_id: new ObjectID(id)});
+          .findOne({_id: new ObjectId(id)});
       
       return user.username;
 

@@ -2,27 +2,37 @@ const express = require('express');
 const debug = require('debug')('app:authRouter');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const authRouter = express.Router();
 
-authRouter.route('/change_password').put(async (req, res) => {
-    const { password } = req.body;
+authRouter.route('/change_password').post(checkAuthenticated, async (req, res) => {
+    const { id, password } = req.body;
     const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
     const dbName = 'political_debate_dev';
 
     let client;
     try {
-        const db = client.db(dbName);
         client = await MongoClient.connect(url);
+        const db = client.db(dbName);
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const results = await db.collection('Users');
+        const query = await db.collection('Users')
+            .findOneAndUpdate({_id: new ObjectId(id)}, {$set: {
+                password: hashedPassword,
+                role: 2
+            }}).catch(err => {
+                debug(err);
+            });
+        debug(query);
     } catch(error){
+        debug("ERROR")
         debug(error);
     }
     client.close();
+    res.redirect('/report');
 });
 
 authRouter.route('/register').post((req, res) => {
@@ -87,6 +97,7 @@ authRouter.route('/profile').get((req, res) => {
 });
 
 function checkAuthenticated(req, res, next) {
+    debug(req.body);
     if (req.isAuthenticated()) {
         return next();
     }

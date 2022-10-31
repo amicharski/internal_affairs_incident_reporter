@@ -36,7 +36,7 @@ app.get('/register', authRouter.checkAuthenticated, (req, res) => {
 });
 
 app.get('/change_password', authRouter.checkAuthenticated, (req, res) => {
-    res.render('change_password');
+    res.render('change_password', {user: req.user});
 });
 
 app.use('/users', usersRouter);

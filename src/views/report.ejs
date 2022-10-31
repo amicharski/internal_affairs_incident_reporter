@@ -3,7 +3,6 @@
     <%- include("./partials/navigation"); -%>
     <div>
         <form name="report" action="/reports/" method="post">
-            <div class="text-white"><%=user._id%></div>
             <input type="hidden" name="reporter" value="<%=user._id%>" />
             <div>
                 <label for="offendingStaffMember" class="text-white">Offending Staff Member(s):

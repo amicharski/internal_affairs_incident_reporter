@@ -1,6 +1,7 @@
 const express = require('express');
 const debug = require('debug')('app:reportRouter');
 const axios = require('axios');
+const authRouter = require('./authRouter');
 const { MongoClient, ObjectId } = require('mongodb');
 const { getUsernameFromID } = require('../services/user_services');
 
@@ -25,7 +26,7 @@ reportRouter.use((req, res, next) => {
 
 reportRouter.route('/').post(async (req, res) => {
     let client;
-    const { offending_staff_member, incident_type, description, reporter, reporter_name } = req.body;
+    const { offending_staff_member, incident_type, description, reporter } = req.body;
     try {
         const url = 'mongodb://127.0.0.1:27017';
         const dbName = 'political_debate_dev';
@@ -75,7 +76,48 @@ reportRouter.route('/').get(async (req, res) => {
     })();
 });
 
-reportRouter.route('/:id').get((req, res) => {
+reportRouter.route('/put').post(async (req, res) => {
+  (async function mongo(){
+    let client;
+    try {
+        debug('heya buddy');
+        const url = 'mongodb://127.0.0.1:27017'; // process.env.DBURL
+        const dbName = 'political_debate_dev';
+        
+        client = await MongoClient.connect(url);
+        debug('Connected to mongoDB');
+    
+        const db = client.db(dbName);
+
+        switch(req.body.status){
+          case '0':
+            const investigatePut = await db
+              .collection('Reports')
+              .findOneAndUpdate({_id: new ObjectId(req.body.id)}, {$set: {
+                status: 1,
+                handled_by: req.body.investigator
+              }});
+			debug(investigatePut);
+            break;
+          case '1':
+            const resolvePut = await db
+              .collection('Reports')
+              .findOneAndUpdate({_id: new ObjectId(req.body.id)}, {$set: {
+                status: 2,
+                resolution_description: req.body.resolution_description
+              }});
+			debug(resolvePut);
+            break;
+        }
+      } catch (error) {
+        debug(error.stack);
+      }
+      client.close();
+      res.redirect('/reports');
+  })();
+});
+
+reportRouter.route('/:id').get(authRouter.checkAuthenticated, (req, res) => {
     const id = req.params.id;
     (async function mongo(){
         let client;
@@ -94,11 +136,11 @@ reportRouter.route('/:id').get((req, res) => {
             
             const reported_by = await getUsernameFromID(report.reporter_id);
 
-            res.render('view_report', { report: report, reporter_name: reported_by });
-          } catch (error) {
+            res.render('view_report', { report: report, reporter_name: reported_by, user: req.user });
+        } catch (error) {
             debug(error.stack);
-          }
-          client.close();
+        }
+        client.close();
     })();
 });
 
