@@ -12,8 +12,8 @@ module.exports = function localStrategy(){
         usernameField: 'username',
         passwordField: 'password'
     }, async (username, password, done) => {
-
         let client;
+        
         try {
             client = await MongoClient.connect(url);
 

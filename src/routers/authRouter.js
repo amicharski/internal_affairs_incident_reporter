@@ -36,48 +36,46 @@ authRouter.route('/change_password').post(checkAuthenticated, async (req, res) =
     res.redirect('/report');
 });
 
-authRouter.route('/register').post((req, res) => {
+authRouter.route('/register').post(async (req, res) => {
     const { username, password } = req.body;
 
-    (async function addUser(){
-        let client;
-        try {
-            client = await MongoClient.connect(url);
+    let client;
+    try {
+        client = await MongoClient.connect(url);
 
-            const db = client.db(dbName);
+        const db = client.db(dbName);
 
-            let user;
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
+        let user;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-            const duplicates = await db.collection('Users')
-                .findOne({username: username});
+        const duplicates = await db.collection('Users')
+            .findOne({username: username});
 
-            if(duplicates !== null){
-                res.send("User already exists");
-                return;
-                // res.status(403).json({ message: "User already exists" });
-            }
-
-            user = {username: username, password: hashedPassword, role: 1};
-
-            const results = await db.collection('Users')
-                .insertOne(user);
-            debug(results);
-            
-            const returnedUser = await db.collection('Users')
-                .findOne({_id: results.insertedId});
-            debug(returnedUser);
-
-            req.login(returnedUser, () => {
-                res.redirect('/register');
-                // res.redirect('/auth/profile');
-            });
-        } catch(error){
-            debug(error);
+        if(duplicates !== null){
+            res.send("User already exists");
+            return;
+            // res.status(403).json({ message: "User already exists" });
         }
-        client.close();
-    })();
+
+        user = {username: username, password: hashedPassword, role: 1};
+
+        const results = await db.collection('Users')
+            .insertOne(user);
+        debug(results);
+        
+        const returnedUser = await db.collection('Users')
+            .findOne({_id: results.insertedId});
+        debug(returnedUser);
+
+        req.login(returnedUser, () => {
+            res.redirect('/register');
+            // res.redirect('/auth/profile');
+        });
+    } catch(error){
+        debug(error);
+    }
+    client.close();
 });
 
 authRouter.route('/login')

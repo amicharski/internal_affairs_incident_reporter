@@ -8,24 +8,21 @@ const dbName = process.env.DB_NAME;
 const adminRouter = express.Router();
 
 adminRouter.route('/').get(async (req, res) => {
-
-  (async function mongo(){
-      let client;
-      try {
-          client = await MongoClient.connect(url);
-          debug('Connected to mongoDB');
-      
-          const db = client.db(dbName);
-      
-          const response = await db.collection('Users')
-              .insertMany();
-          
-          res.render('users', { response });
-        } catch (error){
-          debug(error.stack);
-        }
-        client.close();
-  })();
+	let client;
+	try {
+		client = await MongoClient.connect(url);
+		debug('Connected to mongoDB');
+	
+		const db = client.db(dbName);
+	
+		const response = await db.collection('Users')
+			.insertMany();
+		
+		res.render('users', { response });
+	} catch (error){
+		debug(error.stack);
+	}
+	client.close();
 });
 
 module.exports = adminRouter;
