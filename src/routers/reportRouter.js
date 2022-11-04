@@ -10,20 +10,18 @@ const dbName = process.env.DB_NAME;
 
 const reportRouter = express.Router();
 reportRouter.use((req, res, next) => {
-  if(req.user){
-    next();
-  } else {
-    res.redirect('/')
-  }
+	if(req.user){
+    	next();
+  	} else {
+    	res.redirect('/')
+  	}
 });
 
-reportRouter.route('/').post(async (req, res) => {
+reportRouter.route('/').post(authRouter.checkAuthenticated, async (req, res) => {
     let client;
     const { offending_staff_member, incident_type, description, reporter } = req.body;
     try {
-
         client = await MongoClient.connect(url);
-
         const db = client.db(dbName);
 
         const name = await getUsernameFromID(reporter);
@@ -43,90 +41,81 @@ reportRouter.route('/').post(async (req, res) => {
     res.redirect('/');
 });
 
-reportRouter.route('/').get(async (req, res) => {
-    (async function mongo(){
-        let client;
-        try {
-            
-            client = await MongoClient.connect(url);
-            debug('Connected to mongoDB');
-        
-            const db = client.db(dbName);
-        
-            const response = await db
-                .collection('Reports')
-                .find().toArray();
-            
-            res.render('reports', { response });
-          } catch (error) {
-            debug(error.stack);
-          }
-          client.close();
-    })();
-});
-
-reportRouter.route('/put').post(async (req, res) => {
-  (async function mongo(){
+reportRouter.route('/').get(authRouter.checkIA, async (req, res) => {
     let client;
     try {
-        debug('heya buddy');
-        
+        client = await MongoClient.connect(url);
+        debug('Connected to mongoDB');
+      
+        const db = client.db(dbName);
+      
+        const response = await db
+            .collection('Reports')
+            .find().toArray();
+          
+        res.render('reports', { user: req.user, response });
+    } catch (error) {
+        debug(error.stack);
+    }
+
+    client.close();
+});
+
+reportRouter.route('/put').post(authRouter.checkIA, async (req, res) => {
+    let client;
+    try {
         client = await MongoClient.connect(url);
         debug('Connected to mongoDB');
     
         const db = client.db(dbName);
 
         switch(req.body.status){
-          case '0':
-            const investigatePut = await db
-              .collection('Reports')
-              .findOneAndUpdate({_id: new ObjectId(req.body.id)}, {$set: {
-                status: 1,
-                handled_by: req.body.investigator
-              }});
-			debug(investigatePut);
-            break;
-          case '1':
-            const resolvePut = await db
-              .collection('Reports')
-              .findOneAndUpdate({_id: new ObjectId(req.body.id)}, {$set: {
-                status: 2,
-                resolution_description: req.body.resolution_description
-              }});
-			debug(resolvePut);
-            break;
+        	case '0':
+            	const investigatePut = await db
+              		.collection('Reports')
+              		.findOneAndUpdate({_id: new ObjectId(req.body.id)}, {$set: {
+                		status: 1,
+                		handled_by: req.body.investigator
+              		}});
+				debug(investigatePut);
+            	break;
+          	case '1':
+            	const resolvePut = await db
+              		.collection('Reports')
+              		.findOneAndUpdate({_id: new ObjectId(req.body.id)}, {$set: {
+                		status: 2,
+                		resolution_description: req.body.resolution_description
+              		}});
+				debug(resolvePut);
+            	break;
         }
-      } catch (error) {
-        debug(error.stack);
-      }
-      client.close();
-      res.redirect('/reports');
-  })();
+    } catch(error){
+    	debug(error.stack);
+    }
+    client.close();
+    res.redirect('/reports');
 });
 
-reportRouter.route('/:id').get(authRouter.checkAuthenticated, (req, res) => {
+reportRouter.route('/:id').get(authRouter.checkIA, async (req, res) => {
     const id = req.params.id;
-    (async function mongo(){
-        let client;
-        try {
-            
-            client = await MongoClient.connect(url);
-            debug('Connected to mongoDB');
+    let client;
+    try {
+        client = await MongoClient.connect(url);
+        debug('Connected to mongoDB');
         
-            const db = client.db(dbName);
+        const db = client.db(dbName);
         
-            const report = await db
-                .collection('Reports')
-                .findOne({_id: new ObjectId(id)});
+        const report = await db
+            .collection('Reports')
+            .findOne({_id: new ObjectId(id)});
             
-            const reported_by = await getUsernameFromID(report.reporter_id);
+        const reported_by = await getUsernameFromID(report.reporter_id);
 
-            res.render('view_report', { report: report, reporter_name: reported_by, user: req.user });
-        } catch (error) {
-            debug(error.stack);
-        }
-        client.close();
-    })();
+        res.render('view_report', { report: report, reporter_name: reported_by, user: req.user });
+    } catch(error){
+        debug(error.stack);
+    }
+    client.close();
 });
 
 module.exports = reportRouter;

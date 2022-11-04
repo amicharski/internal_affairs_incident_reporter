@@ -93,13 +93,20 @@ authRouter.route('/profile').get((req, res) => {
     res.json(req.user);
 });
 
-function checkAuthenticated(req, res, next) {
-    debug(req.body);
-    if (req.isAuthenticated()) {
+function checkAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
         return next();
     }
     req.flash('error_message', 'Please login to access the requested page.');
     res.redirect('/auth/login');
+}
+
+function checkIA(req, res, next){
+    if(req.isAuthenticated() && req.user.role >= 3){
+        return next();
+    }
+    req.flash('error_message', 'You are not a member of IA.');
+    res.redirect('/');
 }
 
 function checkNotAuthenticated(req, res, next) {
@@ -110,4 +117,4 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 
-module.exports = {authRouter, checkAuthenticated};
+module.exports = {authRouter, checkAuthenticated, checkIA};
