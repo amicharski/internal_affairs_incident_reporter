@@ -32,16 +32,21 @@ module.exports = function localStrategy(){
                     debug('password correct');
                     done(null, user);
                 } else {
-                    debug('user is suspended');
-                    done(null, false);
+                    const message = 'Your account has been suspended. Please consult an administrator.';
+                    debug(message)
+                    done(null, false, { message: message });
                 }
             } else {
-                done(null, false);
+                const message = 'Incorrect username & password combination.';
+                debug(message)
+                done(null, false, { message: message });
             }
             client.close();
                     
         } catch(error){
-            done(error, false);
+            const message = 'An unknown error has occurred. Report this immediately.';
+            debug(message)
+            done(error, false, { message: message });
         }
     }));
 };

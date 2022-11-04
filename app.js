@@ -3,14 +3,14 @@ const chalk = require('chalk');
 const debug = require('debug')('app');
 const morgan = require('morgan');
 const path = require('path');
-const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const flash = require('express-flash');
 
 const usersRouter = require('./src/routers/usersRouter');
 const adminRouter = require('./src/routers/adminRouter');
 const authRouter = require('./src/routers/authRouter');
-const reportRouter = require('./src/routers/reportROuter');
+const reportRouter = require('./src/routers/reportRouter');
 
 const PORT = process.env.PORT || 8080;
 const app = express();
@@ -21,6 +21,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(session({secret: 'mrroboto'}))
+app.use(flash());
+
+app.use(function(req, res, next){
+    res.locals.success_alert_message = req.flash('success_alert_message');
+    res.locals.error_message = req.flash('error_message');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 require('./src/config/passport.js')(app);
 

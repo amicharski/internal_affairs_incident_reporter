@@ -576,6 +576,10 @@ video {
   display: table;
 }
 
+.hidden {
+  display: none;
+}
+
 .table-auto {
   table-layout: auto;
 }

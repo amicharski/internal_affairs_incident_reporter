@@ -53,9 +53,8 @@ authRouter.route('/register').post(async (req, res) => {
             .findOne({username: username});
 
         if(duplicates !== null){
-            res.send("User already exists");
+            req.flash('error_message', 'Username already exists.');
             return;
-            // res.status(403).json({ message: "User already exists" });
         }
 
         user = {username: username, password: hashedPassword, role: 1};
@@ -80,14 +79,15 @@ authRouter.route('/register').post(async (req, res) => {
 
 authRouter.route('/login')
     .get((req, res) => {
-        res.render('login');
-    }).post(
+        debug(req.session);
+        res.render('login', { message: req.session.messages });
+    }).post(checkNotAuthenticated, (req, res, next) => {
         passport.authenticate('local', {
             successRedirect: '/',
             failureRedirect: '/auth/login',
-            failureFlash: true
-        })
-    );
+            failureMessage: true
+        })(req, res, next);
+    });
 
 authRouter.route('/profile').get((req, res) => {
     res.json(req.user);
@@ -98,7 +98,15 @@ function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
+    req.flash('error_message', 'Please login to access the requested page.');
     res.redirect('/auth/login');
+}
+
+function checkNotAuthenticated(req, res, next) {
+    if(req.isAuthenticated()){
+        return res.redirect('/');
+    }
+    next();
 }
 
 
