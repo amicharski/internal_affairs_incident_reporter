@@ -41,7 +41,7 @@ app.get('/report', authRouter.checkAuthenticated, (req, res) => {
 });
 
 app.get('/register', authRouter.checkAuthenticated, (req, res) => {
-    res.render('register');
+    res.render('register', {user: req.user, message: req.session.messages });
 });
 
 app.get('/change_password', authRouter.checkAuthenticated, (req, res) => {

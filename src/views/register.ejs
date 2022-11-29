@@ -2,9 +2,14 @@
 <body class="bg-slate-900 mx-4">
     <%- include("./partials/navigation"); -%>
     <div>
-        <div class="text-red-500">
-            Invalid username/password combo
+        <div class="text-3xl text-white">
+            New User Registration
         </div>
+        <% if(message != ''){ %>
+            <div class="text-red-500">
+                <%= message %>
+            </div>
+        <% } %>
         <form name="register" 
         action="/auth/register" method="post">
             <div>

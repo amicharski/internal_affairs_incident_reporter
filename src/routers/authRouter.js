@@ -67,10 +67,7 @@ authRouter.route('/register').post(async (req, res) => {
             .findOne({_id: results.insertedId});
         debug(returnedUser);
 
-        req.login(returnedUser, () => {
-            res.redirect('/register');
-            // res.redirect('/auth/profile');
-        });
+        res.redirect('/');
     } catch(error){
         debug(error);
     }
