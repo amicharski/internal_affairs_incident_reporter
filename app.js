@@ -13,7 +13,7 @@ const adminRouter = require('./src/routers/adminRouter');
 const authRouter = require('./src/routers/authRouter');
 const reportRouter = require('./src/routers/reportRouter');
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 const app = express();
 
 app.use(morgan('tiny'));

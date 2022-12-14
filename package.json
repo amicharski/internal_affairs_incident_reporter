@@ -35,11 +35,7 @@
   },
   "nodemonConfig": {
     "restartable": "rs",
-    "delay": 2500,
-    "env": {
-      "PORT": 8080,
-      "DBURL": "mongodb://localhost:27017"
-    }
+    "delay": 2500
   },
   "devDependencies": {
     "tailwindcss": "^3.2.0"
