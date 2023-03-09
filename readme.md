@@ -24,6 +24,6 @@ There are several user roles in this application:
 ```
 DB_URL="mongodb://127.0.0.1:27017"
 DB_NAME="iair_dev"
-VERSION=1.0-ALPHA
+VERSION=1.01-ALPHA
 PORT=8080
 ```
