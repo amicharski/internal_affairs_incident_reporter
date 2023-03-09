@@ -18,12 +18,12 @@ There are several user roles in this application:
 
 1. `git clone` this repository.
 2. Install MongoDB Compass on your local machine.
-3. Create a database and name it "political_debate_dev".
+3. Create a database and name it "iair_dev".
 4. Create a collection and name it "Users".
 5. Create and configure a `.env` file in the parent directory like this:
 ```
 DB_URL="mongodb://127.0.0.1:27017"
-DB_NAME="political_debate_dev"
+DB_NAME="iair_dev"
 VERSION=1.0-ALPHA
 PORT=8080
 ```
